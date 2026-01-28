@@ -34,7 +34,10 @@ func (h *Handler) handleListBuckets(w http.ResponseWriter, r *http.Request) {
 	_ = xml.NewEncoder(w).Encode(resp)
 }
 
-func (h *Handler) handleCreateBucket(w http.ResponseWriter, r *http.Request, bucket string) {
+func (h *Handler) handleCreateBucket(w http.ResponseWriter, r *http.Request, bucket string) -
+	
+	
+	
 	xmlfmt.WriteError(w, http.StatusNotImplemented, "NotImplemented", "create bucket is not implemented yet: "+bucket)
 }
 

@@ -13,7 +13,6 @@ func ListBuckets(baseDir string) ([]BucketMeta, error) {
 
 	file, err := os.Open(path)
 	if err != nil {
-		// если файла нет — это НЕ ошибка, просто пустой список
 		if os.IsNotExist(err) {
 			return buckets, nil
 		}
@@ -38,4 +37,21 @@ func ListBuckets(baseDir string) ([]BucketMeta, error) {
 	}
 
 	return buckets, nil
+}
+func IsBucketEmpty(basedir, bucket string) (bool, error) {
+	dir := filepath.Join(basedir, bucket)
+
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return false, err
+	}
+	for _, e := range entries {
+		if e.Name() != "object.go" {
+			return false, err
+		}
+	}
+	return true, nil
+}
+func RemoveAllFromBuckets(basedir, bucket string) error {
+	return os.RemoveAll(filepath.Join(basedir, bucket))
 }
