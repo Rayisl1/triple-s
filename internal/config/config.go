@@ -26,31 +26,27 @@ Options:
 }
 
 func Parse(args []string) (Config, error) {
-	cfg := Config{}
+	port := flag.Int("port", 8080, "Port number")
+	dir := flag.String("dir", "data", "Path to the directory")
+	help := flag.Bool("help", false, "Show help")
 
-	flagSet := flag.NewFlagSet("triple-s", flag.ContinueOnError)
-	flagSet.SetOutput(nil)
+	flag.Parse()
 
-	flagSet.IntVar(&cfg.Port, "port", 8080, "Port number")
-	flagSet.StringVar(&cfg.Dir, "dir", "data", "Path to the directory")
-	flagSet.BoolVar(&cfg.Help, "help", false, "Show help")
-
-	err := flagSet.Parse(args)
-	if err != nil {
-		return Config{}, err
+	if *help {
+		return Config{Help: true}, nil
 	}
 
-	if cfg.Help {
-		return cfg, nil
-	}
-
-	if cfg.Port < 1 || cfg.Port > 65535 {
+	if *port < 1 || *port > 65535 {
 		return Config{}, errors.New("wrong port number")
 	}
 
-	if cfg.Dir == "" {
+	if *dir == "" {
 		return Config{}, errors.New("directory is empty")
 	}
 
-	return cfg, nil
+	return Config{
+		Port: *port,
+		Dir:  *dir,
+		Help: *help,
+	}, nil
 }
