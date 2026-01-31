@@ -1,27 +1,25 @@
 package main
 
-import (
-	"fmt"
-	"os"
-
-	"triple-s/internal/config"
-	"triple-s/internal/server"
-)
+import "fmt"
 
 func main() {
-	cfg, err := config.Parse(os.Args[1:])
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+	var a int
+	var array [][]int
+	for i := 0; i < a; i++ {
+		for j := 0; j < a; j++ {
+			fmt.Scan(&(array[i][j]))
+		}
 	}
-
-	if cfg.Help {
-		fmt.Print(config.UsageText())
-		return
-	}
-
-	if err := server.Run(cfg); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+	count := 0
+	for i := 0; i < a; i++ {
+		for j := 0; j < a; j++ {
+			if array[i][j] == 1 {
+				count++
+			}
+		}
+		if count >= 2 {
+			fmt.Print(i + 1)
+			break
+		}
 	}
 }

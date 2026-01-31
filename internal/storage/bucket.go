@@ -38,8 +38,31 @@ func ListBuckets(baseDir string) ([]BucketMeta, error) {
 
 	return buckets, nil
 }
-func DeleteBuckets(baseDir string) ([]BucketMeta, error) {
-	if IsBucketEmpty(baseDir) {
 
+func IsExistBucket(baseDir, bucketName string) (bool, error) {
+	path := filepath.Join(baseDir, "buckets.csv")
+	file, err := os.Open(path)
+	if err != nil {
+		return false, err
 	}
+	defer file.Close()
+
+	csvReader := csv.NewReader(file)
+	records, err := csvReader.ReadAll()
+	if err != nil {
+		return false, err
+	}
+
+	for _, record := range records {
+		if record[0] == bucketName {
+			return true, nil
+		}
+	}
+	return false, nil
 }
+
+// func DeleteBuckets(baseDir string) ([]BucketMeta, error) {
+// 	// if IsBucketEmpty(baseDir) {
+
+// 	// }
+// }
