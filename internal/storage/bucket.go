@@ -61,8 +61,67 @@ func IsExistBucket(baseDir, bucketName string) (bool, error) {
 	return false, nil
 }
 
-// func DeleteBuckets(baseDir string) ([]BucketMeta, error) {
-// 	// if IsBucketEmpty(baseDir) {
+func CreateBucketDir(baseDir, bucket string) error {
+	path := filepath.Join(baseDir, bucket)
+	return os.Mkdir(path, 0755)
+}
+func DeleteBucketFromCSV(baseDir, bucket string) error {
+	path := filepath.Join(baseDir, "buckets.csv")
 
-// 	// }
-// }
+	if _, err := os.Stat(path); err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+
+	file, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+	if err != nil {
+		return err
+	}
+
+	newRecords := make([][]string, 0, len(records))
+	for _, rec := range records {
+		if len(rec) == 0 {
+			continue
+		}
+		if rec[0] == bucket {
+			continue
+		}
+		newRecords = append(newRecords, rec)
+	}
+
+	tmpPath := path + ".tmp"
+	tmpFile, err := os.Create(tmpPath)
+	if err != nil {
+		return err
+	}
+
+	writer := csv.NewWriter(tmpFile)
+	if err := writer.WriteAll(newRecords); err != nil {
+		_ = tmpFile.Close()
+		_ = os.Remove(tmpPath)
+		return err
+	}
+	writer.Flush()
+
+	if err := writer.Error(); err != nil {
+		_ = tmpFile.Close()
+		_ = os.Remove(tmpPath)
+		return err
+	}
+
+	if err := tmpFile.Close(); err != nil {
+		_ = os.Remove(tmpPath)
+		return err
+	}
+
+	return os.Rename(tmpPath, path)
+}
