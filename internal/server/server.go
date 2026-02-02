@@ -10,7 +10,6 @@ func Run(cfg config.Config) error {
 	mux := http.NewServeMux()
 
 	h := NewHandler(cfg.Dir)
-	// mux.Handle("/", h)
 
 	mux.HandleFunc("GET /", h.handleListBuckets)
 	mux.HandleFunc("PUT /{BucketName}", h.handleCreateBucket)

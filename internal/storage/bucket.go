@@ -4,6 +4,8 @@ import (
 	"encoding/csv"
 	"os"
 	"path/filepath"
+	"time"
+	"triple-s/internal/utils"
 )
 
 func ListBuckets(baseDir string) ([]BucketMeta, error) {
@@ -64,6 +66,7 @@ func IsExistBucket(baseDir, bucketName string) (bool, error) {
 func CreateBucketDir(baseDir, bucket string) error {
 	path := filepath.Join(baseDir, bucket)
 	return os.Mkdir(path, 0755)
+
 }
 func DeleteBucketFromCSV(baseDir, bucket string) error {
 	path := filepath.Join(baseDir, "buckets.csv")
@@ -124,4 +127,31 @@ func DeleteBucketFromCSV(baseDir, bucket string) error {
 	}
 
 	return os.Rename(tmpPath, path)
+}
+func RemoveBucketDir(baseDir, bucket string) error {
+	path := filepath.Join(baseDir, bucket)
+	return os.RemoveAll(path)
+}
+func IsBucketEmpty(basedir, bucket string) (bool, error) {
+	dir := filepath.Join(basedir, bucket)
+
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return false, err
+	}
+	for _, e := range entries {
+		if e.Name() != "object.go" {
+			return false, err
+		}
+	}
+	return true, nil
+}
+func AddBucket(baseDir string, meta BucketMeta) error {
+	path := filepath.Join(baseDir, meta.Name)
+	creationTime := time.Now()
+	err1 := utils.WriteDataToCsv([]any{meta.Name, creationTime, creationTime}, path)
+	if err1 != nil {
+		return err1
+	}
+	return nil
 }
