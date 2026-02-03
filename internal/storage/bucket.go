@@ -147,9 +147,10 @@ func IsBucketEmpty(basedir, bucket string) (bool, error) {
 	return true, nil
 }
 func AddBucket(baseDir string, meta BucketMeta) error {
-	path := filepath.Join(baseDir, meta.Name)
+	path := filepath.Join(baseDir, "buckets.csv")
 	creationTime := time.Now()
-	err1 := utils.WriteDataToCsv([]any{meta.Name, creationTime, creationTime}, path)
+	cretion := creationTime.Format(time.RFC3339)
+	err1 := utils.WriteDataToCsv([]any{meta.Name, cretion, cretion, "active"}, path)
 	if err1 != nil {
 		return err1
 	}
