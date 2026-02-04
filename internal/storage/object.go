@@ -152,11 +152,12 @@ func IsObjectEmpty(basedir, bucket string) (bool, error) {
 	}
 	return true, nil
 }
-func AddObject(baseDir, bucket string, meta ObjectMeta) error {
+func AddObject(baseDir, bucket, objectKey string, meta ObjectMeta) error {
+
 	path := filepath.Join(baseDir, bucket, "objects.csv")
 	creationTime := time.Now()
 	cretion := creationTime.Format(time.RFC3339)
-	err1 := utils.WriteDataToCsv([]any{meta.Name, cretion, cretion, "active"}, path)
+	err1 := utils.WriteDataToCsv([]any{meta.Name, meta.Size, meta.ContentType, cretion}, path)
 	if err1 != nil {
 		return err1
 	}

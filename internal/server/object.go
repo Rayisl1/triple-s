@@ -47,8 +47,8 @@ func (h *Handler) handlePutObject(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if err := storage.AddObject(h.baseDir, storage.ObjectMeta{
-		Name:         bucket,
+	if err := storage.AddObject(h.baseDir, bucket, objectKey, storage.ObjectMeta{
+		Name:         objectKey,
 		Size:         contentLength,
 		ContentType:  contentType,
 		CreationDate: time.Now().UTC().Format(time.RFC3339),
