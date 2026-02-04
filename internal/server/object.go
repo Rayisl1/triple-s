@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/xml"
 	"net/http"
 	"strconv"
 	"time"
@@ -60,10 +61,58 @@ func (h *Handler) handlePutObject(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *Handler) handleGetObject(w http.ResponseWriter, r *http.Request, bucket, objectKey string) {
+func (h *Handler) handleGetObject(w http.ResponseWriter, r *http.Request) {
+	objects, err := storage.ListObjects(h.baseDir, bucket)
+	if err != nil {
+		xmlfmt.WriteError(w, http.StatusInternalServerError, "InternalError", err.Error())
+		return
+	}
+
+	var xmlObjects []xmlfmt.Bucket
+	for _, o := range objects {
+		xmlObjects = append(xmlObjects, xmlfmt.Object{
+			Name:         o.Name,
+			Size:         o.Size,
+			ContentType:  o.ContenType,
+			CreationDate: o.CreationDate,
+		})
+	}
+
+	resp := xmlfmt.ListAllMyObjectsResult{
+		Objects: xmlfmt.Objects{
+			Object: xmlObjects,
+		},
+	}
+
+	w.Header().Set("Content-Type", "application/xml")
+	w.WriteHeader(http.StatusOK)
+	_ = xml.NewEncoder(w).Encode(resp)
 	xmlfmt.WriteError(w, http.StatusNotImplemented, "NotImplemented", "get object is not implemented yet: "+bucket+"/"+objectKey)
 }
 
-func (h *Handler) handleDeleteObject(w http.ResponseWriter, r *http.Request, bucket, objectKey string) {
+func (h *Handler) handleDeleteObject(w http.ResponseWriter, r *http.Request) {
+	bucket := r.PathValue("BucketName")
+	objectKey := r.PathValue("ObjectKey")
+
+	exists, err := storage.IsExistObject(h.baseDir, bucket, objectKey)
+	if err != nil {
+		xmlfmt.WriteError(w, http.StatusInternalServerError, "InternalError", err.Error())
+		return
+	}
+	if !exists {
+		xmlfmt.WriteError(w, http.StatusNotFound, "NoSuchBucket", "bucket not found")
+		return
+	}
+
+	if err := storage.RemoveObjectFile(h.baseDir, bucket, objectKey); err != nil {
+		xmlfmt.WriteError(w, http.StatusInternalServerError, "InternalError", err.Error())
+		return
+	}
+
+	if err := storage.DeleteObjectFromCSV(h.baseDir, bucket, objectKey); err != nil {
+		xmlfmt.WriteError(w, http.StatusInternalServerError, "InternalError", err.Error())
+		return
+	}
+
 	xmlfmt.WriteError(w, http.StatusNotImplemented, "NotImplemented", "delete object is not implemented yet: "+bucket+"/"+objectKey)
 }

@@ -16,7 +16,7 @@ func Run(cfg config.Config) error {
 	mux.HandleFunc("DELETE /{BucketName}", h.handleDeleteBucket)
 
 	//Object
-	mux.HandleFunc("GET /{BucketName}/{ObjectKey...}", h.handlePutObject)
+	mux.HandleFunc("GET /{BucketName}/{ObjectKey...}", h.handleGetObject)
 	mux.HandleFunc("PUT /{BucketName}/{ObjectKey...}", h.handlePutObject)
 	mux.HandleFunc("DELETE /{BucketName}/{ObjectKey...}", h.handleDeleteBucket)
 

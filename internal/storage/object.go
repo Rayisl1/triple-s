@@ -8,10 +8,10 @@ import (
 	"triple-s/internal/utils"
 )
 
-func ListObjects(baseDir, bucket, objectKey string) ([]ObjectMeta, error) {
+func ListObjects(baseDir, bucket string) ([]ObjectMeta, error) {
 	var objects []ObjectMeta
 
-	path := filepath.Join(baseDir, bucket, objectKey)
+	path := filepath.Join(baseDir, bucket)
 
 	file, err := os.Open(path)
 	if err != nil {
@@ -74,8 +74,8 @@ func CreateObjectFile(baseDir, bucket, objetcKey string) error {
 
 }
 
-func DeleteObjectFromCSV(baseDir, bucket string) error {
-	path := filepath.Join(baseDir, "buckets.csv")
+func DeleteObjectFromCSV(baseDir, bucket, objectKey string) error {
+	path := filepath.Join(baseDir, "objects.csv")
 
 	if _, err := os.Stat(path); err != nil {
 		if os.IsNotExist(err) {
@@ -101,7 +101,7 @@ func DeleteObjectFromCSV(baseDir, bucket string) error {
 		if len(rec) == 0 {
 			continue
 		}
-		if rec[0] == bucket {
+		if rec[0] == objectKey {
 			continue
 		}
 		newRecords = append(newRecords, rec)
@@ -134,24 +134,11 @@ func DeleteObjectFromCSV(baseDir, bucket string) error {
 
 	return os.Rename(tmpPath, path)
 }
-func RemoveObjectFile(baseDir, bucket string) error {
-	path := filepath.Join(baseDir, bucket)
-	return os.RemoveAll(path)
+func RemoveObjectFile(baseDir, bucket, objectKey string) error {
+	path := filepath.Join(baseDir, bucket, objectKey)
+	return os.Remove(path)
 }
-func IsObjectEmpty(basedir, bucket string) (bool, error) {
-	dir := filepath.Join(basedir, bucket)
 
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		return false, err
-	}
-	for _, e := range entries {
-		if e.Name() != "objects.csv" {
-			return false, err
-		}
-	}
-	return true, nil
-}
 func AddObject(baseDir, bucket, objectKey string, meta ObjectMeta) error {
 
 	path := filepath.Join(baseDir, bucket, "objects.csv")
