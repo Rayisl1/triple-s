@@ -68,6 +68,15 @@ func CreateBucketDir(baseDir, bucket string) error {
 	return os.Mkdir(path, 0755)
 
 }
+func CreateObjectcsvinBucket(baseDir, bucket string) error {
+	path := filepath.Join(baseDir, bucket, "objects.csv")
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	return nil
+}
 func DeleteBucketFromCSV(baseDir, bucket string) error {
 	path := filepath.Join(baseDir, "buckets.csv")
 
@@ -140,7 +149,7 @@ func IsBucketEmpty(basedir, bucket string) (bool, error) {
 		return false, err
 	}
 	for _, e := range entries {
-		if e.Name() != "object.go" {
+		if e.Name() != "objects.csv" {
 			return false, err
 		}
 	}

@@ -66,6 +66,10 @@ func (h *Handler) handleCreateBucket(w http.ResponseWriter, r *http.Request) {
 		xmlfmt.WriteError(w, http.StatusInternalServerError, "InternalError", err.Error())
 		return
 	}
+	if err := storage.CreateObjectcsvinBucket(h.baseDir, bucket); err != nil {
+		xmlfmt.WriteError(w, http.StatusInternalServerError, "InternalError", err.Error())
+		return
+	}
 
 	if err := storage.AddBucket(h.baseDir, storage.BucketMeta{
 		Name:         bucket,
