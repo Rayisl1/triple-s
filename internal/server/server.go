@@ -15,6 +15,11 @@ func Run(cfg config.Config) error {
 	mux.HandleFunc("PUT /{BucketName}", h.handleCreateBucket)
 	mux.HandleFunc("DELETE /{BucketName}", h.handleDeleteBucket)
 
+	//Object
+	mux.HandleFunc("GET /{BucketName}/{ObjectKey...}", h.handlePutObject)
+	mux.HandleFunc("PUT /{BucketName}/{ObjectKey...}", h.handlePutObject)
+	mux.HandleFunc("DELETE /{BucketName}/{ObjectKey...}", h.handleDeleteBucket)
+
 	fmt.Printf("Server started on http://localhost:%d\n", cfg.Port)
 	return http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), mux)
 }

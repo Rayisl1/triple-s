@@ -57,6 +57,7 @@ func (h *Handler) handleCreateBucket(w http.ResponseWriter, r *http.Request) {
 		xmlfmt.WriteError(w, http.StatusInternalServerError, "InternalError", err.Error())
 		return
 	}
+
 	if exists {
 		xmlfmt.WriteError(w, http.StatusConflict, "BucketAlreadyExists", "bucket already exists")
 		return
