@@ -62,18 +62,20 @@ func (h *Handler) handlePutObject(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handleGetObject(w http.ResponseWriter, r *http.Request) {
+	bucket := r.PathValue("BucketName")
+	objectKey := r.PathValue("ObjectKey")
 	objects, err := storage.ListObjects(h.baseDir, bucket)
 	if err != nil {
 		xmlfmt.WriteError(w, http.StatusInternalServerError, "InternalError", err.Error())
 		return
 	}
 
-	var xmlObjects []xmlfmt.Bucket
+	var xmlObjects []xmlfmt.Object
 	for _, o := range objects {
 		xmlObjects = append(xmlObjects, xmlfmt.Object{
 			Name:         o.Name,
 			Size:         o.Size,
-			ContentType:  o.ContenType,
+			ContentType:  o.ContentType,
 			CreationDate: o.CreationDate,
 		})
 	}
@@ -91,7 +93,7 @@ func (h *Handler) handleGetObject(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handleDeleteObject(w http.ResponseWriter, r *http.Request) {
-	bucket := r.PathValue("BucketName")
+	bucket := r.PathValue("ObjectName")
 	objectKey := r.PathValue("ObjectKey")
 
 	exists, err := storage.IsExistObject(h.baseDir, bucket, objectKey)
@@ -100,7 +102,7 @@ func (h *Handler) handleDeleteObject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !exists {
-		xmlfmt.WriteError(w, http.StatusNotFound, "NoSuchBucket", "bucket not found")
+		xmlfmt.WriteError(w, http.StatusNotFound, "NoSuchObject", "object not found")
 		return
 	}
 

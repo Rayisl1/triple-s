@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"os"
 	"path/filepath"
+	"strconv"
 	"time"
 	"triple-s/internal/utils"
 )
@@ -32,9 +33,15 @@ func ListObjects(baseDir, bucket string) ([]ObjectMeta, error) {
 		if len(r) < 2 {
 			continue
 		}
+		size, err := strconv.ParseInt(r[1], 10, 64)
+		if err != nil {
+			return nil, err
+		}
 		objects = append(objects, ObjectMeta{
 			Name:         r[0],
-			CreationDate: r[1],
+			Size:         size,
+			ContentType:  r[2],
+			CreationDate: r[3],
 		})
 	}
 
@@ -75,7 +82,7 @@ func CreateObjectFile(baseDir, bucket, objetcKey string) error {
 }
 
 func DeleteObjectFromCSV(baseDir, bucket, objectKey string) error {
-	path := filepath.Join(baseDir, "objects.csv")
+	path := filepath.Join(baseDir, bucket, "objects.csv")
 
 	if _, err := os.Stat(path); err != nil {
 		if os.IsNotExist(err) {
