@@ -2,7 +2,6 @@ package storage
 
 import (
 	"encoding/csv"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -62,9 +61,7 @@ func IsExistObject(baseDir, bucketName, objectKey string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	fmt.Println(records)
 	for _, record := range records {
-		fmt.Println(record[0])
 		if record[0] == objectKey {
 			return true, nil
 		}
