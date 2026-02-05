@@ -2,6 +2,7 @@ package storage
 
 import (
 	"encoding/csv"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -9,10 +10,10 @@ import (
 	"triple-s/internal/utils"
 )
 
-func ListObjects(baseDir, bucket string) ([]ObjectMeta, error) {
+func ListObjects(baseDir, bucket, objectKey string) ([]ObjectMeta, error) {
 	var objects []ObjectMeta
 
-	path := filepath.Join(baseDir, bucket)
+	path := filepath.Join(baseDir, bucket, objectKey)
 
 	file, err := os.Open(path)
 	if err != nil {
@@ -61,8 +62,9 @@ func IsExistObject(baseDir, bucketName, objectKey string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-
+	fmt.Println(records)
 	for _, record := range records {
+		fmt.Println(record[0])
 		if record[0] == objectKey {
 			return true, nil
 		}

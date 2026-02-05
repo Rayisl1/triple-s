@@ -64,7 +64,7 @@ func (h *Handler) handlePutObject(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) handleGetObject(w http.ResponseWriter, r *http.Request) {
 	bucket := r.PathValue("BucketName")
 	objectKey := r.PathValue("ObjectKey")
-	objects, err := storage.ListObjects(h.baseDir, bucket)
+	objects, err := storage.ListObjects(h.baseDir, bucket, objectKey)
 	if err != nil {
 		xmlfmt.WriteError(w, http.StatusInternalServerError, "InternalError", err.Error())
 		return
@@ -89,16 +89,14 @@ func (h *Handler) handleGetObject(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/xml")
 	w.WriteHeader(http.StatusOK)
 	_ = xml.NewEncoder(w).Encode(resp)
-	xmlfmt.WriteError(w, http.StatusNotImplemented, "NotImplemented", "get object is not implemented yet: "+bucket+"/"+objectKey)
 }
 
 func (h *Handler) handleDeleteObject(w http.ResponseWriter, r *http.Request) {
-	bucket := r.PathValue("ObjectName")
+	bucket := r.PathValue("BucketName")
 	objectKey := r.PathValue("ObjectKey")
-
 	exists, err := storage.IsExistObject(h.baseDir, bucket, objectKey)
 	if err != nil {
-		xmlfmt.WriteError(w, http.StatusInternalServerError, "InternalError", err.Error())
+		xmlfmt.WriteError(w, http.StatusInternalServerError, "InternalE1rror", err.Error())
 		return
 	}
 	if !exists {
@@ -107,14 +105,13 @@ func (h *Handler) handleDeleteObject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := storage.RemoveObjectFile(h.baseDir, bucket, objectKey); err != nil {
-		xmlfmt.WriteError(w, http.StatusInternalServerError, "InternalError", err.Error())
+		xmlfmt.WriteError(w, http.StatusInternalServerError, "Internal2Error", err.Error())
 		return
 	}
 
 	if err := storage.DeleteObjectFromCSV(h.baseDir, bucket, objectKey); err != nil {
-		xmlfmt.WriteError(w, http.StatusInternalServerError, "InternalError", err.Error())
+		xmlfmt.WriteError(w, http.StatusInternalServerError, "Internal3Error", err.Error())
 		return
 	}
 
-	xmlfmt.WriteError(w, http.StatusNotImplemented, "NotImplemented", "delete object is not implemented yet: "+bucket+"/"+objectKey)
 }
