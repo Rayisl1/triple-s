@@ -58,7 +58,7 @@ func (h *Handler) handlePutObject(w http.ResponseWriter, r *http.Request) {
 		xmlfmt.WriteError(w, http.StatusInternalServerError, "InternalError", err.Error())
 		return
 	}
-	if err := utils.LastModicationTime(h.baseDir, bucker); err != nil {
+	if err := utils.LastModicationTime(h.baseDir, bucket); err != nil {
 		xmlfmt.WriteError(w, http.StatusInternalServerError, "Internal3Error", err.Error())
 		return
 	}
@@ -118,7 +118,7 @@ func (h *Handler) handleDeleteObject(w http.ResponseWriter, r *http.Request) {
 		xmlfmt.WriteError(w, http.StatusInternalServerError, "Internal3Error", err.Error())
 		return
 	}
-	if err := utils.LastModicationTime(h.baseDir, bucker); err != nil {
+	if err := utils.LastModicationTime(h.baseDir, bucket); err != nil {
 		xmlfmt.WriteError(w, http.StatusInternalServerError, "Internal3Error", err.Error())
 		return
 	}

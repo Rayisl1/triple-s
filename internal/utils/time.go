@@ -4,12 +4,10 @@ import (
 	"encoding/csv"
 	"os"
 	"path/filepath"
+	"time"
 )
 
-func LastModicationTime(bucket, baseDir string) {
-	DeleteBucketFromCSV(bucket, baseDir)
-}
-func DeleteBucketFromCSV(baseDir, bucket string) error {
+func LastModicationTime(baseDir, bucket string) error {
 	path := filepath.Join(baseDir, "buckets.csv")
 
 	if _, err := os.Stat(path); err != nil {
@@ -35,16 +33,19 @@ func DeleteBucketFromCSV(baseDir, bucket string) error {
 	for _, rec := range records {
 		if len(rec) == 0 {
 			continue
-		} //0 - bucket name , 1 - creation time  , 2 creation time , 3 active
+		}
 		if rec[0] == bucket {
-			// newRecords = append(newRecords, rec[:2])
-			// LastModificationTime := time.Now()
-			// newRecords = append(newRecords, LastModificationTime)
-			temp = append(temp, res[4])
+			temp = append(temp, rec[0])
+			temp = append(temp, rec[1])
+			creationTime := time.Now()
+			LastModificationTime := creationTime.Format(time.RFC3339)
+			temp = append(temp, LastModificationTime)
+			temp = append(temp, "active")
+			newRecords = append(newRecords, temp)
+			continue
 		}
 		newRecords = append(newRecords, rec)
 	}
-
 	tmpPath := path + ".tmp"
 	tmpFile, err := os.Create(tmpPath)
 	if err != nil {
