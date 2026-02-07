@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"triple-s/internal/storage"
+	"triple-s/internal/utils"
 	"triple-s/internal/validate"
 	"triple-s/internal/xmlfmt"
 )
@@ -55,6 +56,10 @@ func (h *Handler) handlePutObject(w http.ResponseWriter, r *http.Request) {
 		CreationDate: time.Now().UTC().Format(time.RFC3339),
 	}); err != nil {
 		xmlfmt.WriteError(w, http.StatusInternalServerError, "InternalError", err.Error())
+		return
+	}
+	if err := utils.LastModicationTime(h.baseDir, bucker); err != nil {
+		xmlfmt.WriteError(w, http.StatusInternalServerError, "Internal3Error", err.Error())
 		return
 	}
 
@@ -110,6 +115,10 @@ func (h *Handler) handleDeleteObject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := storage.DeleteObjectFromCSV(h.baseDir, bucket, objectKey); err != nil {
+		xmlfmt.WriteError(w, http.StatusInternalServerError, "Internal3Error", err.Error())
+		return
+	}
+	if err := utils.LastModicationTime(h.baseDir, bucker); err != nil {
 		xmlfmt.WriteError(w, http.StatusInternalServerError, "Internal3Error", err.Error())
 		return
 	}
