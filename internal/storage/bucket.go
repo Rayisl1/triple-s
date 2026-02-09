@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
 	"triple-s/internal/utils"
 )
 
@@ -65,9 +66,9 @@ func IsExistBucket(baseDir, bucketName string) (bool, error) {
 
 func CreateBucketDir(baseDir, bucket string) error {
 	path := filepath.Join(baseDir, bucket)
-	return os.Mkdir(path, 0755)
-
+	return os.Mkdir(path, 0o755)
 }
+
 func CreateObjectcsvinBucket(baseDir, bucket string) error {
 	path := filepath.Join(baseDir, bucket, "objects.csv")
 	file, err := os.Create(path)
@@ -77,6 +78,7 @@ func CreateObjectcsvinBucket(baseDir, bucket string) error {
 	defer file.Close()
 	return nil
 }
+
 func DeleteBucketFromCSV(baseDir, bucket string) error {
 	path := filepath.Join(baseDir, "buckets.csv")
 
@@ -137,10 +139,12 @@ func DeleteBucketFromCSV(baseDir, bucket string) error {
 
 	return os.Rename(tmpPath, path)
 }
+
 func RemoveBucketDir(baseDir, bucket string) error {
 	path := filepath.Join(baseDir, bucket)
 	return os.RemoveAll(path)
 }
+
 func IsBucketEmpty(basedir, bucket string) (bool, error) {
 	dir := filepath.Join(basedir, bucket)
 
@@ -155,6 +159,7 @@ func IsBucketEmpty(basedir, bucket string) (bool, error) {
 	}
 	return true, nil
 }
+
 func AddBucket(baseDir string, meta BucketMeta) error {
 	path := filepath.Join(baseDir, "buckets.csv")
 	creationTime := time.Now()

@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
+
 	"triple-s/internal/utils"
 )
 
@@ -77,7 +78,6 @@ func CreateObjectFile(baseDir, bucket, objetcKey string) error {
 	}
 	defer file.Close()
 	return nil
-
 }
 
 func DeleteObjectFromCSV(baseDir, bucket, objectKey string) error {
@@ -140,13 +140,13 @@ func DeleteObjectFromCSV(baseDir, bucket, objectKey string) error {
 
 	return os.Rename(tmpPath, path)
 }
+
 func RemoveObjectFile(baseDir, bucket, objectKey string) error {
 	path := filepath.Join(baseDir, bucket, objectKey)
 	return os.Remove(path)
 }
 
 func AddObject(baseDir, bucket, objectKey string, meta ObjectMeta) error {
-
 	path := filepath.Join(baseDir, bucket, "objects.csv")
 	creationTime := time.Now()
 	cretion := creationTime.Format(time.RFC3339)

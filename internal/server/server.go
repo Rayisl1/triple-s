@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"net/http"
+
 	"triple-s/internal/config"
 )
 
@@ -15,7 +16,7 @@ func Run(cfg config.Config) error {
 	mux.HandleFunc("PUT /{BucketName}", h.handleCreateBucket)
 	mux.HandleFunc("DELETE /{BucketName}", h.handleDeleteBucket)
 
-	//Object
+	// Object
 	mux.HandleFunc("GET /{BucketName}/{ObjectKey...}", h.handleGetObject)
 	mux.HandleFunc("PUT /{BucketName}/{ObjectKey...}", h.handlePutObject)
 	mux.HandleFunc("DELETE /{BucketName}/{ObjectKey...}", h.handleDeleteObject)

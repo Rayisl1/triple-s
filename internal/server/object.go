@@ -122,5 +122,4 @@ func (h *Handler) handleDeleteObject(w http.ResponseWriter, r *http.Request) {
 		xmlfmt.WriteError(w, http.StatusInternalServerError, "Internal3Error", err.Error())
 		return
 	}
-
 }
